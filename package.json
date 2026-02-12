@@ -1,0 +1,22 @@
+{
+  "name": "workforce-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:admin": "turbo dev --filter=admin",
+    "dev:employee": "turbo dev --filter=employee",
+    "dev:api": "turbo dev --filter=socket-server",
+    "build:admin": "turbo build --filter=admin",
+    "build:employee": "turbo build --filter=employee"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0"
+  },
+  "packageManager": "npm@10.2.0"
+}
