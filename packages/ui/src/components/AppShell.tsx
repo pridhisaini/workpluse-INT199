@@ -17,6 +17,7 @@ interface AppShellProps {
     accentColor?: string;
     currentPath?: string;
     onLogout?: () => void;
+    LinkComponent?: React.ElementType;
 }
 
 const SIDEBAR_WIDTH = 260;
@@ -33,6 +34,7 @@ export default function AppShell({
     accentColor = '#6366f1',
     currentPath = '/',
     onLogout,
+    LinkComponent,
 }: AppShellProps) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -48,6 +50,7 @@ export default function AppShell({
                 collapsedWidth={SIDEBAR_COLLAPSED_WIDTH}
                 accentColor={accentColor}
                 currentPath={currentPath}
+                LinkComponent={LinkComponent}
             />
             <Box
                 component="main"

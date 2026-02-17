@@ -13,7 +13,7 @@ const statusColors: Record<string, { bg: string; color: string }> = {
     present: { bg: '#ecfdf5', color: '#059669' },
     completed: { bg: '#ecfdf5', color: '#059669' },
     online: { bg: '#ecfdf5', color: '#059669' },
-    inactive: { bg: '#f1f5f9', color: '#64748b' },
+    inactive: { bg: '#fffbeb', color: '#d97706' },
     absent: { bg: '#fef2f2', color: '#dc2626' },
     suspended: { bg: '#fef2f2', color: '#dc2626' },
     offline: { bg: '#f1f5f9', color: '#64748b' },

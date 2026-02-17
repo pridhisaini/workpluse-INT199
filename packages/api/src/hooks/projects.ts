@@ -1,11 +1,11 @@
 import { AxiosInstance } from 'axios';
 import { useApiMutation, useApiQuery, createQueryKeys } from './use-api';
-import { Project, PaginatedResponse } from '@repo/types';
+import { Project, ApiResponse } from '@repo/types';
 
 const projectKeys = createQueryKeys('projects');
 
 export function useProjects(client: AxiosInstance, params?: Record<string, any>) {
-    return useApiQuery<Project[]>(
+    return useApiQuery<ApiResponse<Project[]>>(
         client,
         projectKeys.list(params || {}),
         '/projects',
@@ -16,7 +16,7 @@ export function useProjects(client: AxiosInstance, params?: Record<string, any>)
 }
 
 export function useProject(client: AxiosInstance, id: string) {
-    return useApiQuery<Project>(
+    return useApiQuery<ApiResponse<Project>>(
         client,
         projectKeys.detail(id),
         `/projects/${id}`
@@ -24,7 +24,7 @@ export function useProject(client: AxiosInstance, id: string) {
 }
 
 export function useCreateProject(client: AxiosInstance) {
-    return useApiMutation<Project, Partial<Project>>(
+    return useApiMutation<ApiResponse<Project>, Partial<Project>>(
         client,
         '/projects',
         'post'
@@ -32,25 +32,33 @@ export function useCreateProject(client: AxiosInstance) {
 }
 
 export function useUpdateProject(client: AxiosInstance, id: string) {
-    return useApiMutation<Project, Partial<Project>>(
+    return useApiMutation<ApiResponse<Project>, Partial<Project>>(
         client,
         `/projects/${id}`,
-        'put'
+        'patch'
     );
 }
 
-export function useDeleteProject(client: AxiosInstance) {
-    return useApiMutation<void, string>(
+export function useDeleteProject(client: AxiosInstance, id: string) {
+    return useApiMutation<ApiResponse<void>, void>(
         client,
-        '/projects', // Assuming DELETE /projects/:id but mutationFn usually takes variables
+        `/projects/${id}`,
         'delete'
     );
 }
 
-export function useAssignEmployee(client: AxiosInstance, projectId: string) {
-    return useApiMutation<void, { userId: string }>(
+export function useEmployeeProjects(client: AxiosInstance, userId: string) {
+    return useApiQuery<ApiResponse<Project[]>>(
         client,
-        `/projects/${projectId}/assign`,
+        projectKeys.list({ employeeId: userId }),
+        `/projects/employee/${userId}`
+    );
+}
+
+export function useAssignMembers(client: AxiosInstance, projectId: string) {
+    return useApiMutation<ApiResponse<Project>, { userIds: string[] }>(
+        client,
+        `/projects/${projectId}/members`,
         'post'
     );
 }

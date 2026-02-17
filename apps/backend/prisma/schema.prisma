@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  password     String
+  firstName    String
+  lastName     String
+  avatar       String?
+  role         String    @default("employee")
+  department   String?
+  designation  String?
+  phone        String?
+  status       String    @default("active")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  projects     Project[] @relation("ProjectMembers")
+  timeEntries  TimeEntry[]
+  attendance   Attendance[]
+  notifications AppNotification[]
+  activityLogs ActivityLog[]
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  status      String        @default("planning")
+  startDate   DateTime      @default(now())
+  endDate     DateTime?
+  budget      Float?
+  progress    Float         @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  members     User[]        @relation("ProjectMembers")
+  timeEntries TimeEntry[]
+}
+
+model TimeEntry {
+  id          String          @id @default(uuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id])
+  projectId   String?
+  project     Project?        @relation(fields: [projectId], references: [id])
+  task        String?
+  description String?
+  startTime   DateTime        @default(now())
+  endTime     DateTime?
+  duration    Int             @default(0) // in seconds
+  status      String          @default("running")
+  date        DateTime        @default(now())
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  date      DateTime         @default(now())
+  checkIn   DateTime?
+  checkOut  DateTime?
+  status    String           @default("present")
+  workHours Float?
+  overtime  Float?
+  notes     String?
+}
+
+model AppNotification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      String           @default("info")
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+model ActivityLog {
+  id        String       @id @default(uuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  userName  String
+  action    String
+  details   String?
+  type      String
+  timestamp DateTime     @default(now())
+}

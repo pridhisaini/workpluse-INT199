@@ -26,6 +26,7 @@ interface SidebarProps {
     collapsedWidth: number;
     accentColor?: string;
     currentPath?: string;
+    LinkComponent?: React.ElementType;
 }
 
 export default function Sidebar({
@@ -38,6 +39,7 @@ export default function Sidebar({
     collapsedWidth,
     accentColor = '#6366f1',
     currentPath = '/',
+    LinkComponent,
 }: SidebarProps) {
     return (
         <Box
@@ -130,11 +132,12 @@ export default function Sidebar({
                 )}
                 <List sx={{ px: 1 }}>
                     {items.map((item) => {
-                        const isActive = currentPath === item.href;
+                        const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
                         const button = (
                             <ListItemButton
                                 key={item.label}
-                                href={item.href}
+                                component={LinkComponent || 'a'}
+                                {...(LinkComponent ? { href: item.href } : { href: item.href })}
                                 selected={isActive}
                                 sx={{
                                     borderRadius: '10px',

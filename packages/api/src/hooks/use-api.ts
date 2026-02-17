@@ -33,7 +33,7 @@ export function useApiQuery<TData>(
 // Generic mutation hook
 export function useApiMutation<TData, TVariables>(
     client: AxiosInstance,
-    url: string,
+    url?: string | ((variables: TVariables) => string),
     method: 'post' | 'put' | 'patch' | 'delete' = 'post',
     options?: Omit<UseMutationOptions<TData, ApiError, TVariables>, 'mutationFn'> & {
         axiosConfig?: AxiosRequestConfig;
@@ -43,7 +43,8 @@ export function useApiMutation<TData, TVariables>(
     return useMutation<TData, ApiError, TVariables>({
         mutationFn: async (variables: TVariables) => {
             const config = { ...axiosConfig };
-            const { data } = await client[method]<TData>(url, variables, config);
+            const resolvedUrl = typeof url === 'function' ? url(variables) : (url || '');
+            const { data } = await client[method]<TData>(resolvedUrl, variables, config);
             return data;
         },
         ...mutationOptions,

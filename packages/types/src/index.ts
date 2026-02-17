@@ -6,6 +6,7 @@ export interface User {
     lastName: string;
     avatar?: string;
     role: UserRole;
+    organizationId: string;
     department?: string;
     designation?: string;
     phone?: string;
@@ -56,7 +57,7 @@ export interface Project {
     status: ProjectStatus;
     startDate: string;
     endDate?: string;
-    members: string[];
+    members: User[];
     budget?: number;
     progress: number;
     createdAt: string;
@@ -129,6 +130,11 @@ export interface EmployeeDashboardStats {
 // ─── Reports ────────────────────────────────────────────
 export type Trend = 'up' | 'down' | 'stable';
 
+export interface ProductivityTrend {
+    labels: string[];
+    data: number[];
+}
+
 export interface ProductivityReport {
     score: number;
     change: string;
@@ -176,21 +182,29 @@ export interface PaginatedResponse<T> {
 
 // ─── Socket Events ──────────────────────────────────────
 export interface ServerToClientEvents {
-    'user:status-change': (data: { userId: string; status: UserStatus }) => void;
-    'attendance:update': (data: Attendance) => void;
-    'time:tick': (data: { userId: string; duration: number }) => void;
+    'USER_ONLINE': (data: { userId: string }) => void;
+    'USER_OFFLINE': (data: { userId: string }) => void;
+    'SESSION_UPDATE': (data: {
+        type: 'SESSION_START' | 'SESSION_STOP' | 'SESSION_TICK';
+        userId: string;
+        sessionId?: string;
+        duration?: number;
+        activeSeconds?: number;
+        idleSeconds?: number;
+        lastActivity?: string | Date;
+        session?: any;
+    }) => void;
+    'SESSION_SYNC': (data: any) => void;
+    'INACTIVE_ALERT': (data: any) => void;
+    'OVERTIME_ALERT': (data: any) => void;
+    'ADMIN_NOTIFICATION': (data: any) => void;
     'notification': (data: AppNotification) => void;
     'dashboard:stats-update': (data: Partial<AdminDashboardStats> & { userId?: string; productivity?: number }) => void;
-    'session:sync': (data: { type: 'start' | 'stop' | 'sync'; projectId?: string; task?: string; seconds?: number }) => void;
 }
 
 export interface ClientToServerEvents {
-    'time:start': (data: { projectId?: string; task?: string }) => void;
-    'time:stop': (data: { entryId?: string; seconds?: number }) => void;
-    'time:pause': (data: { entryId: string }) => void;
-    'attendance:check-in': () => void;
-    'attendance:check-out': () => void;
     'productivity:update': (data: { value: number }) => void;
+    'activity:ping': () => void;
 }
 
 // ─── Notifications ──────────────────────────────────────

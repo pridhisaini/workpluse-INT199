@@ -16,25 +16,33 @@ export function useSessions(client: AxiosInstance, params?: Record<string, any>)
 }
 
 export function useCurrentSession(client: AxiosInstance) {
-    return useApiQuery<TimeEntry | null>(
+    return useApiQuery<any | null>(
         client,
-        sessionKeys.detail('current'),
-        '/sessions/current'
+        sessionKeys.detail('active'),
+        '/sessions/active'
     );
 }
 
 export function useStartSession(client: AxiosInstance) {
-    return useApiMutation<TimeEntry, { projectId?: string; task?: string }>(
+    return useApiMutation<any, { projectId?: string; task?: string }>(
         client,
         '/sessions/start',
         'post'
     );
 }
 
-export function useStopSession(client: AxiosInstance) {
-    return useApiMutation<TimeEntry, { entryId: string; seconds?: number }>(
+export function useLogManualSession(client: AxiosInstance) {
+    return useApiMutation<any, { projectId: string; task: string; startTime: string; endTime: string; description?: string }>(
         client,
-        '/sessions/stop',
+        '/sessions/manual',
+        'post'
+    );
+}
+
+export function useStopSession(client: AxiosInstance) {
+    return useApiMutation<any, { id: string }>(
+        client,
+        (variables) => `/sessions/${variables.id}/stop`,
         'post'
     );
 }
@@ -44,5 +52,16 @@ export function useUpdateSession(client: AxiosInstance, id: string) {
         client,
         `/sessions/${id}`,
         'put'
+    );
+}
+
+export function useSessionHistory(client: AxiosInstance, params?: { startDate?: string; endDate?: string }) {
+    return useApiQuery<any>(
+        client,
+        sessionKeys.list({ type: 'history', ...params }),
+        '/sessions/history',
+        {
+            axiosConfig: { params }
+        }
     );
 }
